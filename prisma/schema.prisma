@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  client
+  seller
+  admin
+}
+
+model State {
+  stateId String @id @default(uuid())
+  state   String
+  City    City[]
+}
+
+model City {
+  cityId  String @id @default(uuid())
+  city    String
+  // Relations
+  state   State  @relation(fields: [stateId], references: [stateId])
+  stateId String
+}
+
+model ProductCategory {
+  categoryId String    @id @default(uuid())
+  category   String
+  Product    Product[]
+}
+
+model Product {
+  productId   String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  //Relations
+  Order       Order[]
+  category    ProductCategory @relation(fields: [categoryId], references: [categoryId])
+  categoryId  String
+  CoffeShop   CoffeShop       @relation(fields: [CoffeShopId], references: [coffeShopId])
+  CoffeShopId String
+  Institute   Institute       @relation(fields: [InstituteId], references: [instituteId])
+  InstituteId String
+}
+
+model Order {
+  orderId         String         @id @default(uuid())
+  quantity        Int
+  total           Float
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  // Relations
+  product         Product[]
+  user            User           @relation(fields: [userId], references: [userId])
+  userId          String
+  PaymentMethod   PaymentMethod? @relation(fields: [PaymentMethodId], references: [paymentMethodId])
+  PaymentMethodId String?
+}
+
+model User {
+  userId    String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      Role     @default(client)
+
+  // Relations
+  userInfo UserInfo?
+  order    Order[]
+}
+
+model UserInfo {
+  userInfoId String   @id @default(uuid())
+  name       String
+  lastname   String
+  phone      String
+  address    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  //Relations
+  user       User     @relation(fields: [userId], references: [userId])
+  userId     String   @unique
+}
+
+model CoffeShop {
+  coffeShopId String    @id @default(uuid())
+  name        String
+  address     String
+  phone       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  product     Product[]
+  //Relations
+  institute   Institute @relation(fields: [instituteId], references: [instituteId])
+  instituteId String
+}
+
+model Institute {
+  instituteId String      @id @default(uuid())
+  name        String
+  address     String
+  phone       String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  product     Product[]
+  coffeShops  CoffeShop[]
+}
+
+model PaymentMethod {
+  paymentMethodId String  @id @default(uuid())
+  method          String
+  //Relations
+  order           Order[]
+}
