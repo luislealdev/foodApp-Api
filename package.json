@@ -20,7 +20,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "serve": "node dist/index.js",
+    "seed": "ts-node src/seed/seed-database.ts"
   },
   "devDependencies": {
     "prisma": "^5.7.1"
