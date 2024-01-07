@@ -1,20 +1,27 @@
 import express, { Request, Response } from 'express';
-const prisma = require('./db/prisma');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(express.json());
+
+const auth = require('./api/auth');
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello, TypeScript Express!');
 });
 
-app.get('/seed', (req: Request, res: Response) => {
-    try {
+// app.get('/seed', async (req: Request, res: Response) => {
+//     try {
+//         await prisma.state.deleteMany({});
+//         res.send('Seeded!');
+//     } catch (error) {
 
-    } catch (error) {
+//     }
+// });
 
-    }
-});
+app.use('/api/auth', auth);
 
 
 app.listen(port, () => {
