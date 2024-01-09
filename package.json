@@ -18,12 +18,13 @@
     "uuid": "^9.0.1"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
     "seed": "ts-node src/seed/seed-database.ts"
   },
   "devDependencies": {
+    "nodemon": "^3.0.2",
     "prisma": "^5.7.1"
   }
 }

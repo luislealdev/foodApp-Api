@@ -47,24 +47,24 @@ model Product {
   Order       Order[]
   category    ProductCategory @relation(fields: [categoryId], references: [categoryId])
   categoryId  String
-  CoffeShop   CoffeShop       @relation(fields: [CoffeShopId], references: [coffeShopId])
+  CoffeeShop  CoffeeShop      @relation(fields: [CoffeShopId], references: [coffeShopId])
   CoffeShopId String
   Institute   Institute       @relation(fields: [InstituteId], references: [instituteId])
   InstituteId String
 }
 
 model Order {
-  orderId         String         @id @default(uuid())
-  quantity        Int
-  total           Float
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  orderId   String    @id @default(uuid())
+  quantity  Int
+  total     Float
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   // Relations
-  product         Product[]
-  user            User           @relation(fields: [userId], references: [userId])
-  userId          String
-  PaymentMethod   PaymentMethod? @relation(fields: [PaymentMethodId], references: [paymentMethodId])
-  PaymentMethodId String?
+  product   Product[]
+  user      User      @relation(fields: [userId], references: [userId])
+  userId    String
+  payment   Payment   @relation(fields: [paymentId], references: [paymentId])
+  paymentId String    @unique
 }
 
 model User {
@@ -91,7 +91,7 @@ model UserInfo {
   userId     String   @unique
 }
 
-model CoffeShop {
+model CoffeeShop {
   coffeShopId String    @id @default(uuid())
   name        String
   address     String
@@ -105,19 +105,32 @@ model CoffeShop {
 }
 
 model Institute {
-  instituteId String      @id @default(uuid())
+  instituteId String       @id @default(uuid())
   name        String
   address     String
   phone       String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   product     Product[]
-  coffeShops  CoffeShop[]
+  coffeeShops CoffeeShop[]
+}
+
+model Payment {
+  paymentId String   @id @default(uuid())
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //Relations
+  order     Order?
+
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [paymentMethodId])
+  paymentMethodId String        @unique
 }
 
 model PaymentMethod {
-  paymentMethodId String  @id @default(uuid())
+  paymentMethodId String    @id @default(uuid())
   method          String
   //Relations
-  order           Order[]
+  payment         Payment[]
+  paymentId       String
 }

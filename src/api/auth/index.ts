@@ -1,6 +1,6 @@
 import express from 'express';
 
-const prisma = require('../../db/prisma');
+const prisma = require('../../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -30,13 +30,12 @@ router.post('/login', async (req, res) => {
 
         // Generar un token JWT con el ID del usuario y el role
         const token = jwt.sign(
-            { userId: user.userId, role: user.role },
+            { userId: user.userId },
             process.env.JWT_ACCESS_SECRET, // Reemplaza con tu secreto para firmar el token
-            { expiresIn: '1h' } // Opcional: tiempo de expiración del token
         );
 
         // Enviar el token JWT como respuesta
-        res.status(200).json({ token });
+        res.status(200).json({ id: user.userId, email: user.email, fullName: user.UserInfo.fullName, role: user.role, token });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ message: 'Error al iniciar sesión.' });
@@ -92,13 +91,12 @@ router.post('/register', async (req, res) => {
 
         // Generar un token JWT con el ID del usuario y el role
         const token = jwt.sign(
-            { userId: newUser.userId, role: newUser.role, newUser: newUser.userInfo.fullName },
-            process.env.JWT_ACCESS_SECRET, // Reemplaza con tu secreto para firmar el token
-            { expiresIn: '1h' } // Opcional: tiempo de expiración del token
+            { userId: newUser.userId },
+            process.env.JWT_ACCESS_SECRET,
         );
 
         // Enviar el token JWT como respuesta
-        res.status(200).json({ token });
+        res.status(200).json({ id: newUser.userId, email: newUser.email, fullName, role: newUser.role, token });
     } catch (error) {
         console.error('Error al registrar usuario:', error);
         res.status(500).json({ message: 'Error al registrar usuario.' });
