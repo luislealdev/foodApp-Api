@@ -20,7 +20,7 @@ For the register, it must look like:
  "fullName":"Luis Leal",
 "email":"luisrrleal@gmail.com",
 "password1":"12345",
-"password2":"12345",
+"password2":"12345"
 }
 
 For the login, it must look like:

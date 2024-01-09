@@ -1,6 +1,6 @@
 import express from 'express';
 
-const prisma = require('../../db');
+const prisma = require('../../db/prisma');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -15,6 +15,13 @@ router.post('/login', async (req, res) => {
             where: {
                 email: email,
             },
+            include: {
+                userInfo: {
+                    select: {
+                        fullName: true
+                    }
+                }
+            }
         });
 
         if (!user) {
@@ -32,10 +39,10 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign(
             { userId: user.userId },
             process.env.JWT_ACCESS_SECRET, // Reemplaza con tu secreto para firmar el token
-        );
+        );        
 
         // Enviar el token JWT como respuesta
-        res.status(200).json({ id: user.userId, email: user.email, fullName: user.UserInfo.fullName, role: user.role, token });
+        res.status(200).json({ id: user.userId, email: user.email, fullName: user.userInfo.fullName, role: user.role, token });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ message: 'Error al iniciar sesión.' });
@@ -44,7 +51,6 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
 
-    //TODO: ACCEPT ALL OTHER INFO FROM USER
     const { fullName, email, password1, password2 } = req.body;
 
     try {
